@@ -13,7 +13,7 @@ export default function Home() {
       <Button className="bg-black">Click</Button>
       <Button onClick={() => setTheme("dark")}>Dark mode</Button>
       <Button onClick={() => setTheme("light")}>Light mode</Button>
-      <Button onClick={() => setTheme("light")}>Light mode</Button>
+      
     </div>
   );
 }
