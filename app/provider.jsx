@@ -1,6 +1,6 @@
 import React from 'react'
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 function Provider({ children, ...props }) {
   return (
@@ -12,6 +12,7 @@ function Provider({ children, ...props }) {
       {...props}
     >
       <SidebarProvider>
+        <SidebarTrigger />
         <div>{children}</div>
       </SidebarProvider>
     </NextThemesProvider>
