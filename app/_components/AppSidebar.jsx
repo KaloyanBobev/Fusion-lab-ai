@@ -9,7 +9,9 @@ import {
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader />
+      <SidebarHeader>
+        <Image src={"/logo.svg"} alt="logo" />
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup />
         <SidebarGroup />
