@@ -12,13 +12,16 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Image
-          src={"../logo.svg"}
-          alt="logo"
-          width={120}
-          height={40}
-          priority
-        />
+        <div>
+          <Image
+            src={"../logo.svg"}
+            alt="logo"
+            width={60}
+            height={60}
+            className="w-[40px] h-[40px]"
+          />
+          <h2>AI Fusion</h2>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup />
