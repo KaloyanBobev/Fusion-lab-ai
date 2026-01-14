@@ -1,6 +1,6 @@
+"use client";
 import Image from "next/image";
-import { Sun } from "lucide-react";
-
+import { Sun, Moon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -9,27 +9,40 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 
 export function AppSidebar() {
+  const { theme, setTheme } = useTheme();
+
   return (
     <Sidebar>
       <SidebarHeader>
         <div className="p-3">
-          <div className="flex items-center gap-3">
-            <Image
-              src={"../logo.svg"}
-              alt="logo"
-              width={60}
-              height={60}
-              className="w-[40px] h-[40px]"
-            />
-            <h2 className="font-bold text-xl">AI Fusion</h2>
+          <div className=" flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <Image
+                src={"../logo.svg"}
+                alt="logo"
+                width={60}
+                height={60}
+                className="w-[40px] h-[40px]"
+              />
+              <h2 className="font-bold text-xl">AI Fusion</h2>
+            </div>
+            <div>
+              {theme == "light" ? (
+                <Button variant={"ghost"} onClick={() => setTheme("dark")}>
+                  {" "}
+                  <Sun />
+                </Button>
+              ) : (
+                <Button variant={"ghost"} onClick={() => setTheme("light")}>
+                  <Moon />
+                </Button>
+              )}
+            </div>
           </div>
-          <div>
-            <Button>
-              <Sun />
-            </Button>
-          </div>
+          <Button className="mt-7 w-full" size="lg">+ New Chat</Button>
         </div>
       </SidebarHeader>
       <SidebarContent>
