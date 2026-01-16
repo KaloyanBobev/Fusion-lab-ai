@@ -42,19 +42,26 @@ export function AppSidebar() {
               )}
             </div>
           </div>
-          <Button className="mt-7 w-full" size="lg">+ New Chat</Button>
+          <Button className="mt-7 w-full" size="lg">
+            + New Chat
+          </Button>
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup className={'p-3'}>
-          <h2 className="font-bold text-lg">Chat</h2>
-          <p className="text-sm text-gray-400">Sign in to start chating with multiple AI models </p>
+        <SidebarGroup>
+          <div className={"p-3"}>
+            <h2 className="font-bold text-lg">Chat</h2>
+            <p className="text-sm text-gray-400">
+              Sign in to start chating with multiple AI models{" "}
+            </p>
+          </div>
         </SidebarGroup>
-        
       </SidebarContent>
       <SidebarFooter>
-        <div>
-          <Button className={'w-full'} size={'large'}>Sign In/Sign Up</Button>
+        <div className="p-3 mb-10">
+          <Button className={"w-full"} size={"large"}>
+            Sign In/Sign Up
+          </Button>
         </div>
       </SidebarFooter>
     </Sidebar>
