@@ -14,10 +14,12 @@ function Provider({ children, ...props }) {
       {...props}
     >
       <SidebarProvider>
-        <AppSidebar /> 
-       
-        <AppHeader/>
-        <div>{children}</div>
+        <AppSidebar />
+
+        <div className="w-full">
+          <AppHeader />
+          {children}
+        </div>
       </SidebarProvider>
     </NextThemesProvider>
   );
