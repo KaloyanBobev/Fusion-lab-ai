@@ -1,12 +1,15 @@
 import { Button } from '@/components/ui/button'
 import React from 'react'
 import { Paperclip, Mic, Send } from "lucide-react";
+import AiMultiModels from "./AiMultiModels";
 
 function ChatInputBox() {
   return (
     <div className="relative min-h-screen">
       {/* Page Content */}
-      <div></div>
+      <div>
+        <AiMultiModels />
+      </div>
       {/* Fixed Chat Input */}
       <div className="fixed bottom-0 left-0 w-full flex justify-center px-4 pb-4">
         <div className="w-full border rounded-xl shadow-md max-w-2xl p-4">
