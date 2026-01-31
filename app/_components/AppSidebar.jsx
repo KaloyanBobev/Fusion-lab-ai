@@ -58,8 +58,8 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="p-3 mb-10">
-          <Button className={"w-full"} size={"large"}>
+        <div className="p-3 mb-10 ">
+          <Button className={'w-full'} size={"lg"}>
             Sign In/Sign Up
           </Button>
         </div>
