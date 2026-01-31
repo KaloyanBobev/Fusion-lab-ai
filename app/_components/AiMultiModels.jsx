@@ -17,8 +17,8 @@ function AiMultiModels() {
   return (
     <div className="flex flex-1 has-[75vh] border-b">
       {aiModelList.map((model, index) => (
-        <div key={index} className='flex w-full'>
-          <div className='flex items-center gap-4'>
+        <div key={index} className="flex w-full items-center justify-between">
+          <div className="flex items-center gap-4">
             <Image src={model.icon} alt={model.model} width={24} height={24} />
 
             <Select>
@@ -27,18 +27,17 @@ function AiMultiModels() {
               </SelectTrigger>
               <SelectContent>
                 {model.subModel.map((subModel, index) => (
-                  <SelectItem key={index} value={subModel.name}>{subModel.name}</SelectItem>
+                  <SelectItem key={index} value={subModel.name}>
+                    {subModel.name}
+                  </SelectItem>
                 ))}
-
-              
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Switch/>
+            <Switch />
           </div>
         </div>
-
       ))}
     </div>
   );

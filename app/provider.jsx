@@ -15,8 +15,8 @@ function Provider({ children, ...props }) {
     >
       <SidebarProvider>
         <AppSidebar />
-
-        <div className={"w-full"}>
+        {/* min-w-0 */}
+        <div className={"w-full "}>
           <AppHeader />
           {children}
         </div>
