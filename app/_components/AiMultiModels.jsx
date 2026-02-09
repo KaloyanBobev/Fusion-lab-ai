@@ -6,11 +6,13 @@ import Image from 'next/image';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from '@/components/ui/switch';
+import { Switch } from "@/components/ui/switch";
 import { Lock, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -19,7 +21,7 @@ function AiMultiModels() {
 
   const onToggleChange = (model, value) => {
     setAiModelList((prev) =>
-      prev.map((m) => (m.model === model ? { ...m, enable: value } : m))
+      prev.map((m) => (m.model === model ? { ...m, enable: value } : m)),
     );
   };
   return (
@@ -46,11 +48,14 @@ function AiMultiModels() {
                     <SelectValue placeholder={model.subModel[0].name} />
                   </SelectTrigger>
                   <SelectContent>
-                    {model.subModel.map((subModel, index) => (
-                      <SelectItem key={index} value={subModel.name}>
-                        {subModel.name}
-                      </SelectItem>
-                    ))}
+                    <SelectGroup>
+                    <SelectLabel>Free</SelectLabel>
+                      {model.subModel.map((subModel, index) => subModel.premium==true &&(
+                        <SelectItem key={index} value={subModel.name}>
+                          {subModel.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               )}
@@ -68,9 +73,13 @@ function AiMultiModels() {
               )}
             </div>
           </div>
-          {model.premium&&model.enable&& <div className='flex items-center justify-center h-full'>
-            <Button><Lock/> Upgrade to unlock</Button>
-          </div>}
+          {model.premium && model.enable && (
+            <div className="flex items-center justify-center h-full">
+              <Button>
+                <Lock /> Upgrade to unlock
+              </Button>
+            </div>
+          )}
         </div>
       ))}
     </div>
