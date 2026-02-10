@@ -48,13 +48,37 @@ function AiMultiModels() {
                     <SelectValue placeholder={model.subModel[0].name} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectGroup>
-                    <SelectLabel>Free</SelectLabel>
-                      {model.subModel.map((subModel, index) => subModel.premium==true &&(
-                        <SelectItem key={index} value={subModel.name}>
-                          {subModel.name}
-                        </SelectItem>
-                      ))}
+                    <SelectGroup className="p-3">
+                      <SelectLabel className="text-sm tex-gray-400">
+                        Free
+                      </SelectLabel>
+                      {model.subModel.map(
+                        (subModel, index) =>
+                          subModel.premium == false && (
+                            <SelectItem key={index} value={subModel.name}>
+                              {subModel.name}
+                              {subModel.premium && <Lock className="h-4 w-4" />}
+                            </SelectItem>
+                          ),
+                      )}
+                    </SelectGroup>
+
+                    <SelectGroup className="px-3">
+                      <SelectLabel className="text-sm tex-gray-400">
+                        Premium
+                      </SelectLabel>
+                      {model.subModel.map(
+                        (subModel, index) =>
+                          subModel.premium == true && (
+                            <SelectItem
+                              key={index}
+                              value={subModel.name}
+                              disabled={subModel.premium}
+                            >
+                              {subModel.name}
+                            </SelectItem>
+                          ),
+                      )}
                     </SelectGroup>
                   </SelectContent>
                 </Select>

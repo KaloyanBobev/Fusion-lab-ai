@@ -7,6 +7,7 @@ import AppHeader from "./_components/AppHeader";
 import { useUser } from "@clerk/nextjs";
 import { db } from "@/config/FirebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 
 function Provider({ children, ...props }) {
   const { user } = useUser();
@@ -46,6 +47,7 @@ function Provider({ children, ...props }) {
       disableTransitionOnChange
       {...props}
     >
+    <AiSelectedModelContext.Provider value={{}}
       <SidebarProvider>
         <AppSidebar />
         {/* min-w-0 */}
