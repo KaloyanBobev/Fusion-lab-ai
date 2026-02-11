@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./_components/AppSidebar";
@@ -8,9 +8,11 @@ import { useUser } from "@clerk/nextjs";
 import { db } from "@/config/FirebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
+import { DefaultModel } from "@/shared/AiModelsShared";
 
 function Provider({ children, ...props }) {
   const { user } = useUser();
+  const [aiSelectedModels, setaiSelectedModels] = useState(DefaultModel);
 
   useEffect(() => {
     if (user) {
@@ -47,15 +49,18 @@ function Provider({ children, ...props }) {
       disableTransitionOnChange
       {...props}
     >
-    <AiSelectedModelContext.Provider value={{}}
-      <SidebarProvider>
-        <AppSidebar />
-        {/* min-w-0 */}
-        <div className={"w-full "}>
-          <AppHeader />
-          {children}
-        </div>
-      </SidebarProvider>
+      <AiSelectedModelContext.Provider
+        value={{ aiSelectedModels, setaiSelectedModels }}
+      >
+        <SidebarProvider>
+          <AppSidebar />
+          {/* min-w-0 */}
+          <div className={"w-full "}>
+            <AppHeader />
+            {children}
+          </div>
+        </SidebarProvider>
+      </AiSelectedModelContext.Provider>
     </NextThemesProvider>
   );
 }
