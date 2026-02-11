@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from "react";
 
-import AiIModelList from '../../shared/AiIModelList';
-import Image from 'next/image';
+import AiIModelList from "../../shared/AiIModelList";
+import Image from "next/image";
 
 import {
   Select,
@@ -15,10 +15,14 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Lock, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 
 function AiMultiModels() {
   const [aiModelList, setAiModelList] = useState(AiIModelList);
 
+  const { aiSelectedModels, setaiSelectedModels } = useContext(
+    AiSelectedModelContext,
+  );
   const onToggleChange = (model, value) => {
     setAiModelList((prev) =>
       prev.map((m) => (m.model === model ? { ...m, enable: value } : m)),
@@ -43,9 +47,11 @@ function AiMultiModels() {
               />
 
               {model.enable && (
-                <Select>
+                <Select defalthValue={aiSelectedModels[model.model].modelId}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={model.subModel[0].name} />
+                    <SelectValue
+                      placeholder={aiSelectedModels[model.model].modelId}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup className="p-3">
@@ -55,7 +61,7 @@ function AiMultiModels() {
                       {model.subModel.map(
                         (subModel, index) =>
                           subModel.premium == false && (
-                            <SelectItem key={index} value={subModel.name}>
+                            <SelectItem key={index} value={subModel.id}>
                               {subModel.name}
                               {subModel.premium && <Lock className="h-4 w-4" />}
                             </SelectItem>
@@ -110,4 +116,4 @@ function AiMultiModels() {
   );
 }
 
-export default AiMultiModels
+export default AiMultiModels;
