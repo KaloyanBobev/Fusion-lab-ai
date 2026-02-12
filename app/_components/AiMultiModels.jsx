@@ -16,6 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import { Lock, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
+import { doc } from "firebase/firestore";
 
 function AiMultiModels() {
   const [aiModelList, setAiModelList] = useState(AiIModelList);
@@ -27,6 +28,17 @@ function AiMultiModels() {
     setAiModelList((prev) =>
       prev.map((m) => (m.model === model ? { ...m, enable: value } : m)),
     );
+  };
+
+  const onSelectedValue = (parentModel, value) => {
+    setaiSelectedModels((prev) => ({
+      ...prev,
+      [parentModel]: {
+        modelId: value,
+      },
+    }));
+    //Update to Firebase Databese
+    const docRef = doc(db, "(default)");
   };
   return (
     <div className="flex flex-1 has-[75vh] border-b">
@@ -47,7 +59,10 @@ function AiMultiModels() {
               />
 
               {model.enable && (
-                <Select defalthValue={aiSelectedModels[model.model].modelId}>
+                <Select
+                  defalthValue={aiSelectedModels[model.model].modelId}
+                  onValueChange={(value) => onSelectedValue(model.model, value)}
+                >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue
                       placeholder={aiSelectedModels[model.model].modelId}
