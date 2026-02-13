@@ -1,3 +1,4 @@
+"use client";
 import React, { useContext, useState } from "react";
 
 import AiIModelList from "../../shared/AiIModelList";
@@ -16,29 +17,35 @@ import { Switch } from "@/components/ui/switch";
 import { Lock, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
-import { doc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/config/FirebaseConfig";
+import { useUser } from "@clerk/nextjs";
 
 function AiMultiModels() {
+  const { user } = useUser();
   const [aiModelList, setAiModelList] = useState(AiIModelList);
-
-  const { aiSelectedModels, setaiSelectedModels } = useContext(
+  const { aiSelectedModels, setAiSelectedModels } = useContext(
     AiSelectedModelContext,
   );
+  console.log("aiSelectedModels", aiSelectedModels);
   const onToggleChange = (model, value) => {
     setAiModelList((prev) =>
       prev.map((m) => (m.model === model ? { ...m, enable: value } : m)),
     );
   };
 
-  const onSelectedValue = (parentModel, value) => {
-    setaiSelectedModels((prev) => ({
+  const onSelectedValue = async (parentModel, value) => {
+    setAiSelectedModels((prev) => ({
       ...prev,
       [parentModel]: {
         modelId: value,
       },
     }));
     //Update to Firebase Databese
-    const docRef = doc(db, "(default)");
+    const docRef = doc(db, "users", user?.primaryEmailAddress?.emailAddress);
+    await updateDoc(docRef, {
+      selectedModelPref: aiSelectedModels,
+    });
   };
   return (
     <div className="flex flex-1 has-[75vh] border-b">

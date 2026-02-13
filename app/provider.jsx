@@ -12,7 +12,7 @@ import { DefaultModel } from "@/shared/AiModelsShared";
 
 function Provider({ children, ...props }) {
   const { user } = useUser();
-  const [aiSelectedModels, setaiSelectedModels] = useState(DefaultModel);
+  const [aiSelectedModels, setAiSelectedModels] = useState(DefaultModel);
 
   useEffect(() => {
     if (user) {
@@ -50,7 +50,7 @@ function Provider({ children, ...props }) {
       {...props}
     >
       <AiSelectedModelContext.Provider
-        value={{ aiSelectedModels, setaiSelectedModels }}
+        value={{ aiSelectedModels, setAiSelectedModels }}
       >
         <SidebarProvider>
           <AppSidebar />
