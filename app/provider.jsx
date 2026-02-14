@@ -26,6 +26,8 @@ function Provider({ children, ...props }) {
     const userSnap = await getDoc(userRef);
     if (userSnap.exists()) {
       console.log("Existing user");
+      const userInfo=userSnap.data();
+      setAiSelectedModels(userInfo?.selectedModelPref);
       return;
     } else {
       const userData = {
