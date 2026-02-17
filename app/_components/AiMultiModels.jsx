@@ -24,10 +24,10 @@ import { useUser } from "@clerk/nextjs";
 function AiMultiModels() {
   const { user } = useUser();
   const [aiModelList, setAiModelList] = useState(AiIModelList);
-  const { aiSelectedModels, setAiSelectedModels } = useContext(
-    AiSelectedModelContext,
-  );
+  const { aiSelectedModels, setAiSelectedModels, messages, setMessages } =
+    useContext(AiSelectedModelContext);
   console.log("aiSelectedModels", aiSelectedModels);
+
   const onToggleChange = (model, value) => {
     setAiModelList((prev) =>
       prev.map((m) => (m.model === model ? { ...m, enable: value } : m)),
@@ -48,7 +48,7 @@ function AiMultiModels() {
     });
   };
   return (
-    <div className="flex flex-1 has-[75vh] border-b">
+    <div className="flex flex-1 h-[75vh] border-b">
       {aiModelList.map((model, index) => (
         <div
           key={index}
@@ -67,13 +67,13 @@ function AiMultiModels() {
 
               {model.enable && (
                 <Select
-                  defalthValue={aiSelectedModels[model.model].modelId}
+                  defalthValue={aiSelectedModels?.[model.model]?.modelId}
                   onValueChange={(value) => onSelectedValue(model.model, value)}
                   disabled={model.premium}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue
-                      placeholder={aiSelectedModels[model.model].modelId}
+                      placeholder={aiSelectedModels?.[model.model]?.modelId}
                     />
                   </SelectTrigger>
                   <SelectContent>
@@ -133,6 +133,20 @@ function AiMultiModels() {
               </Button>
             </div>
           )}
+          <div className="flex-1 p-4">
+            <div className="flex-1 p-4 spce-y-2">
+              {messages?.[model.model]?.map((m, i) => (
+                <div
+                  className={`p-2 rounded-md ${m.role == "user" ? "bg-blue-100 text-blue-900" : "bg-gray-100 text-gray-900"}`}
+                >
+                  {m.role == "assistant" && (
+                    <span>{m.model ?? model.model}</span>
+                  )}
+                  {m.content}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       ))}
     </div>

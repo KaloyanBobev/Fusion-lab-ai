@@ -15,61 +15,64 @@ function Provider({ children, ...props }) {
   const { user } = useUser();
   const [aiSelectedModels, setAiSelectedModels] = useState(DefaultModel);
   const [userDetail, setUserDatail] = useState();
-  useEffect(() => {
-    if (user) {
-      CrateNewUser();
-    }
-  }, [user]);
 
-  const CrateNewUser = async () => {
-    //if user exist
-    const userRef = doc(db, "users", user?.primaryEmailAddress?.emailAddress);
-    const userSnap = await getDoc(userRef);
-    if (userSnap.exists()) {
-      console.log("Existing user");
-      const userInfo = userSnap.data();
-      setAiSelectedModels(userInfo?.selectedModelPref);
-      setUserDatail(userInfo);
-      return;
-    } else {
-      const userData = {
-        name: user?.fullName,
-        email: user?.primaryEmailAddress?.emailAddress,
-        crearAT: new Date(),
-        ramingMsg: 5, //only for free users
-        plan: "Free",
-        credits: 1000, //paid users
-      };
-      await setDoc(userRef, userData);
-      console.log("New User data saved");
-      setUserDatail(userData);
-    }
-    //if not then insert
-  };
-  return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-      {...props}
-    >
-      <UserDetailContext.Provider value={{ userDetail, setUserDatail }}>
-        <AiSelectedModelContext.Provider
-          value={{ aiSelectedModels, setAiSelectedModels }}
-        >
-          <SidebarProvider>
-            <AppSidebar />
-            {/* min-w-0 */}
-            <div className={"w-full "}>
-              <AppHeader />
-              {children}
-            </div>
-          </SidebarProvider>
-        </AiSelectedModelContext.Provider>
-      </UserDetailContext.Provider>
-    </NextThemesProvider>
-  );
+const [messages, setMessages] = useState({});
+
+useEffect(() => {
+  if (user) {
+    CrateNewUser();
+  }
+}, [user]);
+
+const CrateNewUser = async () => {
+  //if user exist
+  const userRef = doc(db, "users", user?.primaryEmailAddress?.emailAddress);
+  const userSnap = await getDoc(userRef);
+  if (userSnap.exists()) {
+    console.log("Existing user");
+    const userInfo = userSnap.data();
+    setAiSelectedModels(userInfo?.selectedModelPref ?? DefaultModel);
+    setUserDatail(userInfo);
+    return;
+  } else {
+    const userData = {
+      name: user?.fullName,
+      email: user?.primaryEmailAddress?.emailAddress,
+      crearAT: new Date(),
+      ramingMsg: 5, //only for free users
+      plan: "Free",
+      credits: 1000, //paid users
+    };
+    await setDoc(userRef, userData);
+    console.log("New User data saved");
+    setUserDatail(userData);
+  }
+  //if not then insert
+};
+return (
+  <NextThemesProvider
+    attribute="class"
+    defaultTheme="system"
+    enableSystem
+    disableTransitionOnChange
+    {...props}
+  >
+    <UserDetailContext.Provider value={{ userDetail, setUserDatail }}>
+      <AiSelectedModelContext.Provider
+        value={{ aiSelectedModels, setAiSelectedModels, messages, setMessages }}
+      >
+        <SidebarProvider>
+          <AppSidebar />
+          {/* min-w-0 */}
+          <div className={"w-full "}>
+            <AppHeader />
+            {children}
+          </div>
+        </SidebarProvider>
+      </AiSelectedModelContext.Provider>
+    </UserDetailContext.Provider>
+  </NextThemesProvider>
+);
 }
 
 export default Provider;
