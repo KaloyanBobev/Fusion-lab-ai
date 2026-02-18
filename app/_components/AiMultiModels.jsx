@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Lock, MessageSquare } from "lucide-react";
+import { Loader, Lock, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 import { doc, updateDoc } from "firebase/firestore";
@@ -140,9 +140,18 @@ function AiMultiModels() {
                   className={`p-2 rounded-md ${m.role == "user" ? "bg-blue-100 text-blue-900" : "bg-gray-100 text-gray-900"}`}
                 >
                   {m.role == "assistant" && (
-                    <span>{m.model ?? model.model}</span>
+                    <span className="text-sm text-gray-400">
+                      {m.model ?? model.model}
+                    </span>
                   )}
-                  {m.content}
+
+                  {m.content == "loading" && (
+                    <>
+                      <Loader className="animate-spin " />
+                      <span>Thinking...</span>
+                    </>
+                  )}
+                  {m.content !== "loading" && <h2>{m.content}</h2>}
                 </div>
               ))}
             </div>
