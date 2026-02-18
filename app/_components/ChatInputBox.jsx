@@ -6,7 +6,7 @@ import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 import axios from 'axios';
 
 function ChatInputBox() {
-  const [userInput, setUserInput] = useState();
+  const [userInput, setUserInput] = useState("");
   const { aiSelectedModels, setAiSelectedModels, messages, setMessages } =
     useContext(AiSelectedModelContext);
 
@@ -40,7 +40,7 @@ function ChatInputBox() {
             ...(prev[parentModel] ?? []),
             {
               role: "assistant",
-              content: "Thinking...",
+              content: "loading",
               model: parentModel,
               loading: true,
             },
@@ -94,9 +94,9 @@ function ChatInputBox() {
     );
   };
 
-useEffect(()=>{
-console.log(messages);
-},[messages])
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
 
   return (
     <div className="relative min-h-screen">
@@ -109,8 +109,8 @@ console.log(messages);
         <div className="w-full border rounded-xl shadow-md max-w-2xl p-4">
           <input
             type="text"
-            placeholder="Ask ke anything..."
-            className="border-0 otline-none"
+            placeholder="Ask me anything..."
+            className="border-0 outline-none"
             onChange={(event) => setUserInput(event.target.value)}
           />
           <div className="mt-3 flex justify-between items-center">
