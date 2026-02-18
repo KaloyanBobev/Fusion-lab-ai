@@ -26,13 +26,23 @@ function AiMultiModels() {
   const [aiModelList, setAiModelList] = useState(AiIModelList);
   const { aiSelectedModels, setAiSelectedModels, messages, setMessages } =
     useContext(AiSelectedModelContext);
-  console.log("aiSelectedModels", aiSelectedModels);
 
   const onToggleChange = (model, value) => {
     setAiModelList((prev) =>
       prev.map((m) => (m.model === model ? { ...m, enable: value } : m)),
     );
+    // setAiSelectedModels((prev) =>
+    //   prev.map((m) => (m.model === model ? { ...m, enable: value } : m)),
+    // );
+    setAiSelectedModels((prev) => ({
+      ...prev,
+      [model]: {
+        ...(prev?.[model] ?? {}),
+        enable: value,
+      },
+    }));
   };
+  console.log("aiSelectedModels", aiSelectedModels);
 
   const onSelectedValue = async (parentModel, value) => {
     setAiSelectedModels((prev) => ({
@@ -67,7 +77,7 @@ function AiMultiModels() {
 
               {model.enable && (
                 <Select
-                  defalthValue={aiSelectedModels?.[model.model]?.modelId}
+                  defaultValue={aiSelectedModels?.[model.model]?.modelId}
                   onValueChange={(value) => onSelectedValue(model.model, value)}
                   disabled={model.premium}
                 >
@@ -78,7 +88,7 @@ function AiMultiModels() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup className="p-3">
-                      <SelectLabel className="text-sm tex-gray-400">
+                      <SelectLabel className="text-sm text-gray-400">
                         Free
                       </SelectLabel>
                       {model.subModel.map(
@@ -133,29 +143,34 @@ function AiMultiModels() {
               </Button>
             </div>
           )}
-          <div className="flex-1 p-4">
-            <div className="flex-1 p-4 spce-y-2">
-              {messages?.[model.model]?.map((m, i) => (
-                <div
-                  className={`p-2 rounded-md ${m.role == "user" ? "bg-blue-100 text-blue-900" : "bg-gray-100 text-gray-900"}`}
-                >
-                  {m.role == "assistant" && (
-                    <span className="text-sm text-gray-400">
-                      {m.model ?? model.model}
-                    </span>
-                  )}
+          {model.enable && (
+            <div className="flex-1 p-4">
+              <div className="flex-1 p-4 space-y-2">
+                {messages?.[model.model]?.map((m, i) => (
+                  <div
+                    key={i}
+                    className={`p-2 rounded-md ${m.role == "user" ? "bg-blue-100 text-blue-900" : "bg-gray-100 text-gray-900"}`}
+                  >
+                    {m.role == "assistant" && (
+                      <span className="text-sm text-gray-400">
+                        {m.model ?? model.model}
+                      </span>
+                    )}
 
-                  {m.content == "loading" && (
-                    <>
-                      <Loader className="animate-spin " />
-                      <span>Thinking...</span>
-                    </>
-                  )}
-                  {m.content !== "loading" && <h2>{m.content}</h2>}
-                </div>
-              ))}
+                    <div className="flex gap-3 items-center">
+                      {m.content == "loading" && (
+                        <>
+                          <Loader className="animate-spin " />
+                          <span>Thinking...</span>
+                        </>
+                      )}
+                    </div>
+                    {m.content !== "loading" && <h2>{m.content}</h2>}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       ))}
     </div>
