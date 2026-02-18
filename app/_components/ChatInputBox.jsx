@@ -31,7 +31,7 @@ function ChatInputBox() {
     // 2️⃣ Fetch response from each enabled model
     Object.entries(aiSelectedModels).forEach(
       async ([parentModel, modelInfo]) => {
-        if (!modelInfo.modelId) return;
+        if (!modelInfo.modelId && !modelInfo.enable) return;
 
         // Add loading placeholder before API call
         setMessages((prev) => ({
@@ -110,7 +110,8 @@ function ChatInputBox() {
           <input
             type="text"
             placeholder="Ask me anything..."
-            className="border-0 outline-none"
+            className="border-0 outline-none w-full"
+            value={userInput}
             onChange={(event) => setUserInput(event.target.value)}
           />
           <div className="mt-3 flex justify-between items-center">
