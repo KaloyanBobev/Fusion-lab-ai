@@ -17,10 +17,12 @@ function ChatInputBox() {
     setMessages((prev) => {
       const updated = { ...prev };
       Object.keys(aiSelectedModels).forEach((modelKey) => {
-        updated[modelKey] = [
-          ...(updated[modelKey] ?? []),
-          { role: "user", content: userInput },
-        ];
+        if (aiSelectedModels[modelKey].enable) {
+          updated[modelKey] = [
+            ...(updated[modelKey] ?? []),
+            { role: "user", content: userInput },
+          ];
+        }
       });
       return updated;
     });
@@ -31,7 +33,7 @@ function ChatInputBox() {
     // 2️⃣ Fetch response from each enabled model
     Object.entries(aiSelectedModels).forEach(
       async ([parentModel, modelInfo]) => {
-        if (!modelInfo.modelId && !modelInfo.enable) return;
+        if (!modelInfo.modelId || aiSelectedModels[parentModel].enable==false) return;
 
         // Add loading placeholder before API call
         setMessages((prev) => ({
