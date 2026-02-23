@@ -6,7 +6,7 @@ import { AppSidebar } from "./_components/AppSidebar";
 import AppHeader from "./_components/AppHeader";
 import { useUser } from "@clerk/nextjs";
 import { db } from "@/config/FirebaseConfig";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 import { DefaultModel } from "@/shared/AiModelsShared";
 import { UserDetailContext } from "@/context/UserDetailContext";
@@ -23,6 +23,20 @@ useEffect(() => {
     CrateNewUser();
   }
 }, [user]);
+
+useEffect(() => {
+  if (aiSelectedModels) {
+    //Update to Firebase Databese
+    updateAiModelSelectionPref();
+  }
+}, [aiSelectedModels]);
+
+const updateAiModelSelectionPref = async () => {
+  const docRef = doc(db, "users", user?.primaryEmailAddress?.emailAddress);
+  await updateDoc(docRef, {
+    selectedModelPref: aiSelectedModels,
+  });
+};
 
 const CrateNewUser = async () => {
   //if user exist
