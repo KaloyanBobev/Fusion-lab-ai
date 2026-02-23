@@ -20,6 +20,8 @@ import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/config/FirebaseConfig";
 import { useUser } from "@clerk/nextjs";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 function AiMultiModels() {
   const { user } = useUser();
@@ -51,11 +53,7 @@ function AiMultiModels() {
         modelId: value,
       },
     }));
-    //Update to Firebase Databese
-    const docRef = doc(db, "users", user?.primaryEmailAddress?.emailAddress);
-    await updateDoc(docRef, {
-      selectedModelPref: aiSelectedModels,
-    });
+   
   };
   return (
     <div className="flex flex-1 h-[75vh] border-b">
@@ -165,7 +163,9 @@ function AiMultiModels() {
                         </>
                       )}
                     </div>
-                    {m.content !== "loading" && <h2>{m.content}</h2>}
+                    {m.content !== "loading" && (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                    )}
                   </div>
                 ))}
               </div>
