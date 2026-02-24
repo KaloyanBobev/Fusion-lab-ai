@@ -5,6 +5,8 @@ import AiMultiModels from "./AiMultiModels";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '@/config/FirebaseConfig';
 
 function ChatInputBox() {
   const [userInput, setUserInput] = useState("");
@@ -14,7 +16,7 @@ function ChatInputBox() {
   const [chatId, setChatId] = useState();
   useEffect(() => {
     setChatId(uuidv4());
-  });
+  },[]);
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
@@ -104,11 +106,18 @@ function ChatInputBox() {
   };
 
   useEffect(() => {
-    console.log(messages);
+    if(messages){
+      SaveMessages();
+    }
+  
   }, [messages]);
 
   const SaveMessages = async () => {
     const docRef=doc(db,'chatHistory',chatId);
+    await setDoc(docRef,{
+      chatId:chatId,
+      messages:messages
+    })
   };
   return (
     <div className="relative min-h-screen">
