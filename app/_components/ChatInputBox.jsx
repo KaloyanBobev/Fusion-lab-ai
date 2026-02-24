@@ -4,11 +4,17 @@ import { Paperclip, Mic, Send } from "lucide-react";
 import AiMultiModels from "./AiMultiModels";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 import axios from 'axios';
+import { v4 as uuidv4 } from "uuid";
 
 function ChatInputBox() {
   const [userInput, setUserInput] = useState("");
   const { aiSelectedModels, setAiSelectedModels, messages, setMessages } =
     useContext(AiSelectedModelContext);
+
+  const [chatId, setChatId] = useState();
+  useEffect(() => {
+    setChatId(uuidv4());
+  });
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
@@ -33,7 +39,8 @@ function ChatInputBox() {
     // 2️⃣ Fetch response from each enabled model
     Object.entries(aiSelectedModels).forEach(
       async ([parentModel, modelInfo]) => {
-        if (!modelInfo.modelId || aiSelectedModels[parentModel].enable==false) return;
+        if (!modelInfo.modelId || aiSelectedModels[parentModel].enable == false)
+          return;
 
         // Add loading placeholder before API call
         setMessages((prev) => ({
@@ -100,6 +107,9 @@ function ChatInputBox() {
     console.log(messages);
   }, [messages]);
 
+  const SaveMessages = async () => {
+    const docRef=doc(db,'chatHistory',chatId);
+  };
   return (
     <div className="relative min-h-screen">
       {/* Page Content */}
