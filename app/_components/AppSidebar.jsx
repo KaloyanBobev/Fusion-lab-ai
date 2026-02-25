@@ -11,10 +11,29 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import UsageCreditProgress from "./UsageCreditProgress";
+import { collection, doc, getDoc, query, where } from "firebase/firestore";
+import { db } from "@/config/FirebaseConfig";
+import { useEffect } from "react";
 
 export function AppSidebar() {
   const { theme, setTheme } = useTheme();
   const { user } = useUser();
+
+  useEffect(() => {
+    user && GetChatHistory();
+  }, [user]);
+
+  const GetChatHistory = async () => {
+    const q = query(
+      collection(db, "chatHistory"),
+      where("userEmail", "==", user?.primaryEmailAddress?.emailAddress),
+    );
+    const querySnapshop = await getDoc(q);
+
+    querySnapshop.forEach((doc) => {
+      console.log(doc.id, doc.data());
+    });
+  };
 
   return (
     <Sidebar>
@@ -44,24 +63,28 @@ export function AppSidebar() {
               )}
             </div>
           </div>
-          {user?
-          <Button className="mt-7 w-full" size="lg">
-            + New Chat
-          </Button>:
-          <SignInButton>
-           <Button className="mt-7 w-full" size="lg">
-            + New Chat
-          </Button> 
-          </SignInButton>}
+          {user ? (
+            <Button className="mt-7 w-full" size="lg">
+              + New Chat
+            </Button>
+          ) : (
+            <SignInButton>
+              <Button className="mt-7 w-full" size="lg">
+                + New Chat
+              </Button>
+            </SignInButton>
+          )}
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <div className={"p-3"}>
             <h2 className="font-bold text-lg">Chat</h2>
-           {!user&& <p className="text-sm text-gray-400">
-              Sign in to start chating with multiple AI models{" "}
-            </p>}
+            {!user && (
+              <p className="text-sm text-gray-400">
+                Sign in to start chating with multiple AI models{" "}
+              </p>
+            )}
           </div>
         </SidebarGroup>
       </SidebarContent>
@@ -75,7 +98,7 @@ export function AppSidebar() {
             </SignInButton>
           ) : (
             <div>
-            <UsageCreditProgress/>
+              <UsageCreditProgress />
               <Button className={"w-full mb-3"}>
                 <Zap />
                 Upgrade Plan
