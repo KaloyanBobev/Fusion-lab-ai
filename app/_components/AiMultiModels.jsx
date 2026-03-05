@@ -53,7 +53,6 @@ function AiMultiModels() {
         modelId: value,
       },
     }));
-   
   };
   return (
     <div className="flex flex-1 h-[75vh] border-b">
@@ -164,7 +163,9 @@ function AiMultiModels() {
                       )}
                     </div>
                     {m.content !== "loading" && (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {m.content}
+                      </ReactMarkdown>
                     )}
                   </div>
                 ))}
