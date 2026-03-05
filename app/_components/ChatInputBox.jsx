@@ -1,24 +1,26 @@
-import { Button } from '@/components/ui/button'
+"use client";
+
+import { Button } from "@/components/ui/button";
 import React, { useContext, useEffect, useState } from "react";
 import { Paperclip, Mic, Send } from "lucide-react";
 import AiMultiModels from "./AiMultiModels";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
-import axios from 'axios';
+import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { doc, setDoc } from 'firebase/firestore';
-import { db } from '@/config/FirebaseConfig';
-import { useUser } from '@clerk/nextjs';
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/config/FirebaseConfig";
+import { useUser } from "@clerk/nextjs";
 
 function ChatInputBox() {
   const [userInput, setUserInput] = useState("");
   const { aiSelectedModels, setAiSelectedModels, messages, setMessages } =
     useContext(AiSelectedModelContext);
-const {user}=useUser();
+  const { user } = useUser();
   const [chatId, setChatId] = useState();
+
   useEffect(() => {
     setChatId(uuidv4());
-  },[]);
-
+  }, []);
   const handleSend = async () => {
     if (!userInput.trim()) return;
 
@@ -42,9 +44,8 @@ const {user}=useUser();
     // 2️⃣ Fetch response from each enabled model
     Object.entries(aiSelectedModels).forEach(
       async ([parentModel, modelInfo]) => {
-        if (!modelInfo.modelId || aiSelectedModels[parentModel].enable == false)
-          return;
-
+        if (!modelInfo.modelId || !modelInfo.enable) return;
+        //&&aiSelectedModels[parentModel].enable == false
         // Add loading placeholder before API call
         setMessages((prev) => ({
           ...prev,
@@ -107,19 +108,14 @@ const {user}=useUser();
   };
 
   useEffect(() => {
-    if(messages){
+    if (messages) {
       SaveMessages();
+      console.log(messages);
     }
-  
   }, [messages]);
 
   const SaveMessages = async () => {
-    const docRef=doc(db,'chatHistory',chatId);
-    await setDoc(docRef,{
-      chatId:chatId,
-      userEmail:user?.primaryEmailAddress?.emailAddress,
-      messages:messages
-    })
+    const docRef=doc()
   };
   return (
     <div className="relative min-h-screen">
@@ -160,4 +156,4 @@ const {user}=useUser();
   );
 }
 
-export default ChatInputBox
+export default ChatInputBox;
