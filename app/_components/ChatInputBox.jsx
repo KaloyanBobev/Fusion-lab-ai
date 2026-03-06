@@ -15,12 +15,13 @@ function ChatInputBox() {
   const [userInput, setUserInput] = useState("");
   const { aiSelectedModels, setAiSelectedModels, messages, setMessages } =
     useContext(AiSelectedModelContext);
-  const { user } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
   const [chatId, setChatId] = useState();
 
   useEffect(() => {
     setChatId(uuidv4());
   }, []);
+
   const handleSend = async () => {
     if (!userInput.trim()) return;
 
@@ -106,17 +107,56 @@ function ChatInputBox() {
       },
     );
   };
+  console.log(
+    "Publishable key:",
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  );
+  useEffect(() => {
+    if (isLoaded) {
+      console.log("Clerk user:", user);
+      console.log("Primary email:", user?.primaryEmailAddress);
+      console.log("Email address:", user?.primaryEmailAddress?.emailAddress);
+    }
+  }, [isLoaded, user]);
 
   useEffect(() => {
-    if (messages) {
-      SaveMessages();
-      console.log(messages);
-    }
-  }, [messages]);
+    if (!isLoaded || !chatId || !messages) return;
+    SaveMessages();
+  }, [messages, isLoaded, chatId]);
 
   const SaveMessages = async () => {
-    const docRef=doc()
+    try {
+      const docRef = doc(db, "chatHistory", chatId);
+
+      await setDoc(docRef, {
+        chatId,
+        userEmail: user?.primaryEmailAddress?.emailAddress || null,
+        messages,
+        createdAt: new Date(),
+      });
+
+      console.log("Messages saved");
+    } catch (error) {
+      console.error("Error saving messages:", error);
+    }
   };
+
+  // useEffect(() => {
+  //   if (messages) {
+  //     SaveMessages();
+  //     console.log(messages);
+  //   }
+  // }, [messages]);
+
+  // const SaveMessages = async () => {
+  //   const docRef=doc(db,'chatHistory',chatId);
+
+  //   await setDoc(docRef,{
+  //     chatId:chatId,
+  //     userEmail:user?.primaryEmailAddress?.emailAddress,
+  //     messages:messages
+  //   })
+  // };
   return (
     <div className="relative min-h-screen">
       {/* Page Content */}
