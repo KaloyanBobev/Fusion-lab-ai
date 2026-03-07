@@ -126,6 +126,7 @@ function ChatInputBox() {
       chatId: chatId,
       userEmail: user?.primaryEmailAddress?.emailAddress,
       messages: messages,
+      lastUpdated: Data.now(),
     });
   };
   return (
