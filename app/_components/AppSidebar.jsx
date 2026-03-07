@@ -19,21 +19,7 @@ export function AppSidebar() {
   const { theme, setTheme } = useTheme();
   const { user } = useUser();
 
-  useEffect(() => {
-    user && GetChatHistory();
-  }, [user]);
 
-  const GetChatHistory = async () => {
-    const q = query(
-      collection(db, "chatHistory"),
-      where("userEmail", "==", user?.primaryEmailAddress?.emailAddress),
-    );
-    const querySnapshop = await getDoc(q);
-
-    querySnapshop.forEach((doc) => {
-      console.log(doc.id, doc.data());
-    });
-  };
 
   return (
     <Sidebar>
