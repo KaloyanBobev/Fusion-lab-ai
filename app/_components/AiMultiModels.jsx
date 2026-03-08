@@ -22,6 +22,7 @@ import { db } from "@/config/FirebaseConfig";
 import { useUser } from "@clerk/nextjs";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useSearchParams } from "next/navigation";
 
 function AiMultiModels() {
   const { user } = useUser();
@@ -44,7 +45,6 @@ function AiMultiModels() {
       },
     }));
   };
-  console.log("aiSelectedModels", aiSelectedModels);
 
   const onSelectedValue = async (parentModel, value) => {
     setAiSelectedModels((prev) => ({
@@ -162,9 +162,9 @@ function AiMultiModels() {
                         </>
                       )}
                     </div>
-                    {m.content !== "loading" && (
+                    {m?.content !== "loading" && m?.content && (
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {m.content}
+                        {m?.content}
                       </ReactMarkdown>
                     )}
                   </div>

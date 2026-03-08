@@ -15,6 +15,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/config/FirebaseConfig";
 import { useEffect, useState } from "react";
 import moment from "moment/moment";
+import Link from "next/link";
 
 export function AppSidebar() {
   const { theme, setTheme } = useTheme();
@@ -40,22 +41,39 @@ export function AppSidebar() {
   };
 
   const GetLastUserMessageFromChat = (chat) => {
-    const allMessages = Object.values(chat.messages).flat();
-    const userMessages = allMessages.filter((msg) => msg.role == "user");
+    const allMessages = Object.values(chat?.messages || {}).flat();
+    const userMessages = allMessages.filter((msg) => msg?.role === "user");
 
-    const lastUserMsg = userMessages[userMessages.length - 1].content || null;
+    const lastUserMsgObj = userMessages[userMessages.length - 1];
+    const lastUserMsg = lastUserMsgObj?.content || "New Chat";
 
-    const lastUpdated = chat.lastUpdated || Date.now();
+    const lastUpdated = chat?.lastUpdated || Date.now();
     const formattedDate = moment(lastUpdated).fromNow();
+
     return {
-      chatId: chat.chatId,
+      chatId: chat?.chatId || "",
       message: lastUserMsg,
       lastMsgDate: formattedDate,
     };
   };
 
+  // const GetLastUserMessageFromChat = (chat) => {
+  //   const allMessages = Object.values(chat.messages).flat();
+  //   const userMessages = allMessages.filter((msg) => msg.role == "user");
+
+  //   const lastUserMsg = userMessages[userMessages.length - 1].content || null;
+
+  //   const lastUpdated = chat.lastUpdated || Date.now();
+  //   const formattedDate = moment(lastUpdated).fromNow();
+  //   return {
+  //     chatId: chat.chatId,
+  //     message: lastUserMsg,
+  //     lastMsgDate: formattedDate,
+  //   };
+  // };
+
   return (
-    <Sidebar className={"min-w-72"}>
+    <Sidebar>
       <SidebarHeader>
         <div className="p-3">
           <div className=" flex justify-between items-center">
@@ -83,9 +101,11 @@ export function AppSidebar() {
             </div>
           </div>
           {user ? (
-            <Button className="mt-7 w-full" size="lg">
-              + New Chat
-            </Button>
+            <Link href={"/"}>
+              <Button className="mt-7 w-full" size="lg">
+                + New Chat
+              </Button>
+            </Link>
           ) : (
             <SignInButton>
               <Button className="mt-7 w-full" size="lg">
@@ -105,17 +125,21 @@ export function AppSidebar() {
               </p>
             )}
             {chatHistory.map((chat, index) => (
-              <div key={index} className="mt-2 ">
+              <Link
+                href={`?chatId=${chat.chatId}`}
+                key={index}
+                className="mt-2 "
+              >
                 <div className="hover:bg-gray-100 p-3 cursor-pointer">
                   <h2 className="text-sm text-gray-400">
                     {GetLastUserMessageFromChat(chat).lastMsgDate}
                   </h2>
-                  <h2 className="tet-lg ">
+                  <h2 className="text-lg line-clamp-1">
                     {GetLastUserMessageFromChat(chat).message}
-                  </h2> 
+                  </h2>
                 </div>
                 <hr className="my-3" />
-              </div>
+              </Link>
             ))}
           </div>
         </SidebarGroup>

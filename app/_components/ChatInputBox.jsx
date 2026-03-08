@@ -7,9 +7,10 @@ import AiMultiModels from "./AiMultiModels";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/config/FirebaseConfig";
 import { useUser } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
 
 function ChatInputBox() {
   const [userInput, setUserInput] = useState("");
@@ -18,9 +19,18 @@ function ChatInputBox() {
   const { user } = useUser();
   const [chatId, setChatId] = useState();
 
+  const params = useSearchParams();
+
   useEffect(() => {
-    setChatId(uuidv4());
-  }, []);
+    const chatId_ = params.get("chatId");
+    if (chatId_) {
+      setChatId(chatId_);
+      GetMessages(chatId_);
+    } else {
+      setMessages({});
+      setChatId(uuidv4());
+    }
+  }, [params]);
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
@@ -107,28 +117,65 @@ function ChatInputBox() {
       },
     );
   };
-  console.log(
-    "Publishable key:",
-    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-  );
 
   useEffect(() => {
-    if (messages) {
+    if (chatId && user && messages && Object.keys(messages).length > 0) {
       SaveMessages();
-      console.log(messages);
     }
-  }, [messages]);
+  }, [messages, chatId, user]);
 
   const SaveMessages = async () => {
-    const docRef = doc(db, "chatHistory", chatId);
+    if (!chatId || !user) return;
 
-    await setDoc(docRef, {
-      chatId: chatId,
-      userEmail: user?.primaryEmailAddress?.emailAddress,
-      messages: messages,
-      lastUpdated: Data.now(),
-    });
+    try {
+      const docRef = doc(db, "chatHistory", chatId);
+
+      await setDoc(docRef, {
+        chatId: chatId,
+        userEmail: user?.primaryEmailAddress?.emailAddress || "",
+        messages: messages || {},
+        lastUpdated: Date.now(),
+      });
+    } catch (error) {
+      console.error("Error saving messages:", error);
+    }
   };
+
+  // const SaveMessages = async () => {
+  //   const docRef = doc(db, "chatHistory", chatId);
+
+  //   await setDoc(docRef, {
+  //     chatId: chatId,
+  //     userEmail: user?.primaryEmailAddress?.emailAddress,
+  //     messages: messages,
+  //     lastUpdated: Date.now(),
+  //   });
+  // };
+  const GetMessages = async (chatId) => {
+    try {
+      const docRef = doc(db, "chatHistory", chatId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const docData = docSnap.data();
+        setMessages(docData?.messages || {});
+      } else {
+        setMessages({});
+      }
+    } catch (error) {
+      console.error("Error getting messages:", error);
+      setMessages({});
+    }
+  };
+
+  // const GetMessages = async (chatId) => {
+  //   const docRef = doc(db, "chatHistory", chatId);
+  //   const docSnap = await getDoc(docRef);
+  //   console.log(docSnap.data());
+  //   const docData = docSnap.data();
+  //   setMessages(docData.messages);
+  // };
+
   return (
     <div className="relative min-h-screen">
       {/* Page Content */}
