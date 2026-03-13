@@ -16,15 +16,18 @@ import { db } from "@/config/FirebaseConfig";
 import { useEffect, useState } from "react";
 import moment from "moment/moment";
 import Link from "next/link";
+import axios from "axios";
 
 export function AppSidebar() {
   const { theme, setTheme } = useTheme();
   const { user } = useUser();
 
   const [chatHistory, setChatHistory] = useState([]);
+  const [freeMsgCount, setFreeMsgCount] = useState(0);
 
   useEffect(() => {
     user && GetChatHistory();
+    user && GetRemanimgTokenMsgs();
   }, [user]);
 
   const GetChatHistory = async () => {
@@ -55,6 +58,12 @@ export function AppSidebar() {
       message: lastUserMsg,
       lastMsgDate: formattedDate,
     };
+  };
+
+  const GetRemanimgTokenMsgs = async () => {
+    const result = await axios.get("/api/user-remaining-msg");
+    console.log(result);
+    setFreeMsgCount(result?.data?.remainingToken);
   };
 
   // const GetLastUserMessageFromChat = (chat) => {
@@ -154,7 +163,7 @@ export function AppSidebar() {
             </SignInButton>
           ) : (
             <div>
-              <UsageCreditProgress />
+              <UsageCreditProgress remainingToken={remainingToken} />
               <Button className={"w-full mb-3"}>
                 <Zap />
                 Upgrade Plan
