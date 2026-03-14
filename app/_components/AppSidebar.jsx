@@ -27,7 +27,7 @@ export function AppSidebar() {
 
   useEffect(() => {
     user && GetChatHistory();
-    user && GetRemanimgTokenMsgs();
+    user && GetRemaningTokenMsgs();
   }, [user]);
 
   const GetChatHistory = async () => {
@@ -60,7 +60,7 @@ export function AppSidebar() {
     };
   };
 
-  const GetRemanimgTokenMsgs = async () => {
+  const GetRemaningTokenMsgs = async () => {
     const result = await axios.get("/api/user-remaining-msg");
     console.log(result);
     setFreeMsgCount(result?.data?.remainingToken);
@@ -163,7 +163,7 @@ export function AppSidebar() {
             </SignInButton>
           ) : (
             <div>
-              <UsageCreditProgress remainingToken={remainingToken} />
+              <UsageCreditProgress remainingToken={freeMsgCount} />
               <Button className={"w-full mb-3"}>
                 <Zap />
                 Upgrade Plan
