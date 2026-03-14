@@ -9,7 +9,7 @@ export async function GET(req) {
     requested: 0,
   }); // Deduct 5 tokens from the bucket
   console.log("Arcjet decision", decision.reason.remaining);
-  const remainigToken = decision.reason.remaining;
+  const remainingToken = decision.reason.remaining;
 
-  return NextResponse.json({ remainigToken: remainigToken });
+  return NextResponse.json({ remainingToken: remainingToken });
 }
