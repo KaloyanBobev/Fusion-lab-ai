@@ -61,7 +61,7 @@ export function AppSidebar() {
   };
 
   const GetRemaningTokenMsgs = async () => {
-    const result = await axios.get("/api/user-remaining-msg");
+    const result = await axios.post("/api/user-remaining-msg");
     console.log(result);
     setFreeMsgCount(result?.data?.remainingToken);
   };
