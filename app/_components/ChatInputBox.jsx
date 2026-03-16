@@ -34,6 +34,19 @@ function ChatInputBox() {
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
+    // Call only if User Free
+    // Deduct and Check Token Limit
+    const result = await axios.post("/api/user-remaining-msg",{
+      token:1
+    });
+    
+    const remianingToken=result?.data?.remainingToken;
+    if(remianingToken<=0 ){
+      console.log("Limit exceed");
+      return;
+    }else{
+
+    }
 
     // 1️⃣ Add user message to all enabled models
     setMessages((prev) => {
@@ -116,7 +129,7 @@ function ChatInputBox() {
         }
       },
     );
-  };
+  };;
 
   useEffect(() => {
     if (chatId && user && messages && Object.keys(messages).length > 0) {
