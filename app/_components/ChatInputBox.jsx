@@ -44,8 +44,6 @@ function ChatInputBox() {
     if(remianingToken<=0 ){
       console.log("Limit exceed");
       return;
-    }else{
-
     }
 
     // 1️⃣ Add user message to all enabled models
