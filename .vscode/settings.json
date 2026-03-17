@@ -1,0 +1,7 @@
+{
+    "files.autoSaveWhenNoErrors": true,
+    "accessibility.signals.lineHasError": "off",
+  "accessibility.signals.lineHasWarning": "off",
+  "accessibility.signals.positionHasError": "off",
+  "accessibility.signals.positionHasWarning": "off"
+}
