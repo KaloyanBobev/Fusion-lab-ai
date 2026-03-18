@@ -11,6 +11,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/config/FirebaseConfig";
 import { useUser } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 function ChatInputBox() {
   const [userInput, setUserInput] = useState("");
@@ -36,13 +37,14 @@ function ChatInputBox() {
     if (!userInput.trim()) return;
     // Call only if User Free
     // Deduct and Check Token Limit
-    const result = await axios.post("/api/user-remaining-msg",{
-      token:1
+    const result = await axios.post("/api/user-remaining-msg", {
+      token: 1,
     });
-    
-    const remianingToken=result?.data?.remainingToken;
-    if(remianingToken<=0 ){
+
+    const remianingToken = result?.data?.remainingToken;
+    if (remianingToken <= 0) {
       console.log("Limit exceed");
+      toast.error("Maximum daily limit exceed");
       return;
     }
 
@@ -127,7 +129,7 @@ function ChatInputBox() {
         }
       },
     );
-  };;
+  };
 
   useEffect(() => {
     if (chatId && user && messages && Object.keys(messages).length > 0) {
