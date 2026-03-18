@@ -13,10 +13,11 @@ import { SignInButton, useUser } from "@clerk/nextjs";
 import UsageCreditProgress from "./UsageCreditProgress";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/config/FirebaseConfig";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import moment from "moment/moment";
 import Link from "next/link";
 import axios from "axios";
+import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 
 export function AppSidebar() {
   const { theme, setTheme } = useTheme();
@@ -29,12 +30,12 @@ export function AppSidebar() {
 
   useEffect(() => {
     user && GetChatHistory();
-    user && GetRemaningTokenMsgs();
+   // user && GetRemaningTokenMsgs();
   }, [user]);
 
   useEffect(()=>{
-    
-  })
+    GetRemaningTokenMsgs();
+  },[messages])
 
   const GetChatHistory = async () => {
     const q = query(
