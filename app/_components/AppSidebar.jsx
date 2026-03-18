@@ -24,11 +24,17 @@ export function AppSidebar() {
 
   const [chatHistory, setChatHistory] = useState([]);
   const [freeMsgCount, setFreeMsgCount] = useState(0);
+  const { aiSelectedModels, setAiSelectedModels, messages, setMessages } =
+    useContext(AiSelectedModelContext);
 
   useEffect(() => {
     user && GetChatHistory();
     user && GetRemaningTokenMsgs();
   }, [user]);
+
+  useEffect(()=>{
+    
+  })
 
   const GetChatHistory = async () => {
     const q = query(
