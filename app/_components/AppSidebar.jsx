@@ -18,6 +18,7 @@ import moment from "moment/moment";
 import Link from "next/link";
 import axios from "axios";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
+import PricingModel from "./PricingModel";
 
 export function AppSidebar() {
   const { theme, setTheme } = useTheme();
@@ -30,12 +31,12 @@ export function AppSidebar() {
 
   useEffect(() => {
     user && GetChatHistory();
-   // user && GetRemaningTokenMsgs();
+    // user && GetRemaningTokenMsgs();
   }, [user]);
 
-  useEffect(()=>{
+  useEffect(() => {
     GetRemaningTokenMsgs();
-  },[messages])
+  }, [messages]);
 
   const GetChatHistory = async () => {
     const q = query(
@@ -171,10 +172,14 @@ export function AppSidebar() {
           ) : (
             <div>
               <UsageCreditProgress remainingToken={freeMsgCount} />
-              <Button className={"w-full mb-3"}>
-                <Zap />
-                Upgrade Plan
-              </Button>
+              <PricingModel>
+                {" "}
+                <Button className={"w-full mb-3"}>
+                  <Zap />
+                  Upgrade Plan
+                </Button>
+              </PricingModel>
+
               <Button className="flex " variant={"ghost"}>
                 <User2 /> <h2>Settings</h2>
               </Button>
