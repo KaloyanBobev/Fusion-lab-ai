@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { SignInButton, useAuth, useUser } from "@clerk/nextjs";
 import UsageCreditProgress from "./UsageCreditProgress";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/config/FirebaseConfig";
@@ -28,6 +28,8 @@ export function AppSidebar() {
   const [freeMsgCount, setFreeMsgCount] = useState(0);
   const { aiSelectedModels, setAiSelectedModels, messages, setMessages } =
     useContext(AiSelectedModelContext);
+  const { has } = useAuth();
+  // const paidUser = has({ plan: "unlimited_plan" });
 
   useEffect(() => {
     user && GetChatHistory();
@@ -171,14 +173,18 @@ export function AppSidebar() {
             </SignInButton>
           ) : (
             <div>
-              <UsageCreditProgress remainingToken={freeMsgCount} />
-              <PricingModel>
-                {" "}
-                <Button className={"w-full mb-3"}>
-                  <Zap />
-                  Upgrade Plan
-                </Button>
-              </PricingModel>
+              {!has({ plan: "unlimited_plan" }) && (
+                <div>
+                  <UsageCreditProgress remainingToken={freeMsgCount} />
+                  <PricingModel>
+                    {" "}
+                    <Button className={"w-full mb-3"}>
+                      <Zap />
+                      Upgrade Plan
+                    </Button>
+                  </PricingModel>
+                </div>
+              )}
 
               <Button className="flex " variant={"ghost"}>
                 <User2 /> <h2>Settings</h2>
