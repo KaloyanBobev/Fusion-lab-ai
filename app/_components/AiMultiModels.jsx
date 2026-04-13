@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { AiSelectedModelContext } from "@/context/AiSelectedModelContext";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/config/FirebaseConfig";
-import { useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useSearchParams } from "next/navigation";
@@ -29,6 +29,10 @@ function AiMultiModels() {
   const [aiModelList, setAiModelList] = useState(AiIModelList);
   const { aiSelectedModels, setAiSelectedModels, messages, setMessages } =
     useContext(AiSelectedModelContext);
+
+  const { has } = useAuth();
+  const hasUnlimitedPlan =
+    typeof has === "function" ? has({ plan: "unlimited_plan" }) : false;
 
   const onToggleChange = (model, value) => {
     setAiModelList((prev) =>
@@ -133,43 +137,41 @@ function AiMultiModels() {
               )}
             </div>
           </div>
-          {model.premium && model.enable && (
+          {!hasUnlimitedPlan && model.premium && model.enable && (
             <div className="flex items-center justify-center h-full">
               <Button>
                 <Lock /> Upgrade to unlock
               </Button>
             </div>
           )}
-          {model.enable && (
-            <div className="flex-1 p-4">
-              <div className="flex-1 p-4 space-y-2">
-                {messages?.[model.model]?.map((m, i) => (
-                  <div
-                    key={i}
-                    className={`p-2 rounded-md ${m.role == "user" ? "bg-blue-100 text-blue-900" : "bg-gray-100 text-gray-900"}`}
-                  >
-                    {m.role == "assistant" && (
-                      <span className="text-sm text-gray-400">
-                        {m.model ?? model.model}
-                      </span>
-                    )}
+          {model.enable && aiSelectedModels[model.model]?.enable && (
+            <div className="flex-1 p-4 space-y-2">
+              {messages?.[model.model]?.map((m, i) => (
+                <div
+                  key={i}
+                  className={`p-2 rounded-md ${m.role == "user" ? "bg-blue-100 text-blue-900" : "bg-gray-100 text-gray-900"}`}
+                >
+                  {m.role == "assistant" && (
+                    <span className="text-sm text-gray-400">
+                      {m.model ?? model.model}
+                    </span>
+                  )}
 
-                    <div className="flex gap-3 items-center">
-                      {m.content == "loading" && (
-                        <>
-                          <Loader className="animate-spin " />
-                          <span>Thinking...</span>
-                        </>
-                      )}
-                    </div>
-                    {m?.content !== "loading" && m?.content && (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {m?.content}
-                      </ReactMarkdown>
+                  <div className="flex gap-3 items-center">
+                    {m.content == "loading" && (
+                      <>
+                        <Loader className="animate-spin " />
+                        <span>Thinking...</span>
+                      </>
                     )}
                   </div>
-                ))}
-              </div>
+                  {m?.content !== "loading" && m?.content && (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {m?.content}
+                    </ReactMarkdown>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>
