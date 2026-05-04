@@ -31,8 +31,8 @@ function AiMultiModels() {
     useContext(AiSelectedModelContext);
 
   const { has } = useAuth();
-  const hasUnlimitedPlan =
-    typeof has === "function" ? has({ plan: "unlimited_plan" }) : false;
+  // const hasUnlimitedPlan =
+  //   typeof has === "function" ? has({ plan: "unlimited_plan" }) : false;
 
   const onToggleChange = (model, value) => {
     setAiModelList((prev) =>
@@ -76,58 +76,72 @@ function AiMultiModels() {
                 height={24}
               />
 
-              {model.enable && (
-                <Select
-                  defaultValue={aiSelectedModels?.[model.model]?.modelId}
-                  onValueChange={(value) => onSelectedValue(model.model, value)}
-                  disabled={model.premium}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue
-                      placeholder={aiSelectedModels?.[model.model]?.modelId}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup className="p-3">
-                      <SelectLabel className="text-sm text-gray-400">
-                        Free
-                      </SelectLabel>
-                      {model.subModel.map(
-                        (subModel, index) =>
-                          subModel.premium == false && (
-                            <SelectItem key={index} value={subModel.id}>
-                              {subModel.name}
-                              {subModel.premium && <Lock className="h-4 w-4" />}
-                            </SelectItem>
-                          ),
-                      )}
-                    </SelectGroup>
+              {!(
+                typeof has === "function" && has({ plan: "unlimited_plan" })
+              ) &&
+                model.enable &&
+                aiSelectedModels[model.model]?.enable && (
+                  <Select
+                    defaultValue={aiSelectedModels?.[model.model]?.modelId}
+                    onValueChange={(value) =>
+                      onSelectedValue(model.model, value)
+                    }
+                    disabled={model.premium}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue
+                        placeholder={aiSelectedModels?.[model.model]?.modelId}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup className="p-3">
+                        <SelectLabel className="text-sm text-gray-400">
+                          Free
+                        </SelectLabel>
+                        {model.subModel.map(
+                          (subModel, index) =>
+                            subModel.premium == false && (
+                              <SelectItem key={index} value={subModel.id}>
+                                {subModel.name}
+                                {subModel.premium && (
+                                  <Lock className="h-4 w-4" />
+                                )}
+                              </SelectItem>
+                            ),
+                        )}
+                      </SelectGroup>
 
-                    <SelectGroup className="px-3">
-                      <SelectLabel className="text-sm tex-gray-400">
-                        Premium
-                      </SelectLabel>
-                      {model.subModel.map(
-                        (subModel, index) =>
-                          subModel.premium == true && (
-                            <SelectItem
-                              key={index}
-                              value={subModel.name}
-                              disabled={subModel.premium}
-                            >
-                              {subModel.name}
-                            </SelectItem>
-                          ),
-                      )}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              )}
+                      <SelectGroup className="px-3">
+                        <SelectLabel className="text-sm tex-gray-400">
+                          Premium
+                        </SelectLabel>
+                        {model.subModel.map(
+                          (subModel, index) =>
+                            subModel.premium == true && (
+                              <SelectItem
+                                key={index}
+                                value={subModel.name}
+                                disabled={subModel.premium}
+                              >
+                                {subModel.name}
+                              </SelectItem>
+                            ),
+                        )}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                )}
             </div>
             <div>
               {model.enable ? (
                 <Switch
                   checked={model.enable}
+                  disabled={
+                    !(
+                      typeof has === "function" &&
+                      has({ plan: "unlimited_plan" })
+                    ) && model.premium
+                  }
                   onCheckedChange={(v) => onToggleChange(model.model, v)}
                 />
               ) : (
@@ -137,43 +151,49 @@ function AiMultiModels() {
               )}
             </div>
           </div>
-          {!hasUnlimitedPlan && model.premium && model.enable && (
-            <div className="flex items-center justify-center h-full">
-              <Button>
-                <Lock /> Upgrade to unlock
-              </Button>
-            </div>
-          )}
-          {model.enable && aiSelectedModels[model.model]?.enable && (
-            <div className="flex-1 p-4 space-y-2">
-              {messages?.[model.model]?.map((m, i) => (
-                <div
-                  key={i}
-                  className={`p-2 rounded-md ${m.role == "user" ? "bg-blue-100 text-blue-900" : "bg-gray-100 text-gray-900"}`}
-                >
-                  {m.role == "assistant" && (
-                    <span className="text-sm text-gray-400">
-                      {m.model ?? model.model}
-                    </span>
-                  )}
+          {!(typeof has === "function" && has({ plan: "unlimited_plan" })) &&
+            model.premium &&
+            model.enable && (
+              <div className="flex items-center justify-center h-full">
+                <Button>
+                  <Lock /> Upgrade to unlock
+                </Button>
+              </div>
+            )}
+          {model.enable &&
+            aiSelectedModels[model.model]?.enable &&
+            (!model.premium ||
+              (typeof has === "function" &&
+                has({ plan: "unlimited_plan" }))) && (
+              <div className="flex-1 p-4 space-y-2">
+                {messages?.[model.model]?.map((m, i) => (
+                  <div
+                    key={i}
+                    className={`p-2 rounded-md ${m.role == "user" ? "bg-blue-100 text-blue-900" : "bg-gray-100 text-gray-900"}`}
+                  >
+                    {m.role == "assistant" && (
+                      <span className="text-sm text-gray-400">
+                        {m.model ?? model.model}
+                      </span>
+                    )}
 
-                  <div className="flex gap-3 items-center">
-                    {m.content == "loading" && (
-                      <>
-                        <Loader className="animate-spin " />
-                        <span>Thinking...</span>
-                      </>
+                    <div className="flex gap-3 items-center">
+                      {m.content == "loading" && (
+                        <>
+                          <Loader className="animate-spin " />
+                          <span>Thinking...</span>
+                        </>
+                      )}
+                    </div>
+                    {m?.content !== "loading" && m?.content && (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {m?.content}
+                      </ReactMarkdown>
                     )}
                   </div>
-                  {m?.content !== "loading" && m?.content && (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {m?.content}
-                    </ReactMarkdown>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
         </div>
       ))}
     </div>
