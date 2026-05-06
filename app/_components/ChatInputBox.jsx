@@ -45,6 +45,8 @@ function ChatInputBox() {
         token: 1,
       });
 
+console.log("MODEL:", parentModel);
+console.log("FULL RESPONSE:", result.data);
       const remianingToken = result?.data?.remainingToken;
       if (remianingToken <= 0) {
         console.log("Limit exceed");
