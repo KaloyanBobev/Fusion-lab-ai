@@ -3,31 +3,42 @@ import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const user = await currentUser();
-  const { token } = await req.json();
-  if (token) {
+  try {
+    const user = await currentUser();
+    const body = await req.json();
+    const token = body?.token;
+
+    // ✅ Always provide a safe fallback
+    const safeUserId =
+      user?.primaryEmailAddress?.emailAddress || "anonymous-user";
+
     const decision = await aj.protect(req, {
-      userId: user?.primaryEmailAddress?.emailAddress,
-      requested: token,
+      userId: safeUserId,
+      requested: typeof token !== "undefined" ? token : 0,
     });
+
+    const remaining = decision?.reason?.remaining ?? 0;
+
     if (decision.isDenied()) {
       return NextResponse.json({
-        error: "Too many Request",
-        remainingToken: decision.reason.remaining,
+        error: "Too many requests",
+        remainingToken: remaining,
       });
     }
+
     return NextResponse.json({
       allowed: true,
-      remainingToken: decision.reason.remaining,
+      remainingToken: remaining,
     });
-  } else {
-    const decision = await aj.protect(req, {
-      userId: user?.primaryEmailAddress?.emailAddress,
-      requested: 0,
-    }); // Deduct 5 tokens from the bucket
-    console.log("Arcjet decision", decision.reason.remaining);
-    const remainingToken = decision.reason.remaining;
+  } catch (error) {
+    console.error("🔥 Arcjet ERROR:", error);
 
-    return NextResponse.json({ remainingToken: remainingToken });
+    return NextResponse.json(
+      {
+        error: "Internal server error",
+        remainingToken: 0,
+      },
+      { status: 500 },
+    );
   }
 }

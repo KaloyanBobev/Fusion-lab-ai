@@ -35,8 +35,8 @@ export async function POST(req) {
 
     const aiResponse = extractText(response.data);
 
-    console.log("RAW:", response.data);
-    console.log("EXTRACTED:", aiResponse);
+    // console.log("RAW:", response.data);
+    // console.log("EXTRACTED:", aiResponse);
 
     return NextResponse.json({
       aiResponse,
