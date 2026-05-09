@@ -1,6 +1,4 @@
 export const dynamic = "force-dynamic";
-
-
 ("use client");
 
 import { useTheme } from "next-themes";
